@@ -1,17 +1,40 @@
 {
-    "buildNpmdoc":"single-line-log",
+    "author": "kai zhu <kaizhu256@gmail.com>",
+    "buildNpmdoc": "single-line-log",
+    "description": "api documentation for [single-line-log (v1.1.2)](https://github.com/freeall/single-line-log#readme) [![npm package](https://img.shields.io/npm/v/npmdoc-single-line-log.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-single-line-log) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-single-line-log.svg)](https://travis-ci.org/npmdoc/node-npmdoc-single-line-log)",
     "devDependencies": {
-        "single-line-log": "*",
         "electron-lite": "kaizhu256/node-electron-lite#alpha",
+        "single-line-log": "*",
         "utility2": "kaizhu256/node-utility2#alpha"
     },
-    "name":"npmdoc-single-line-log",
+    "engines": {
+        "node": ">=4.0"
+    },
+    "homepage": "https://github.com/npmdoc/node-npmdoc-single-line-log",
+    "keywords": [
+        "documentation",
+        "single-line-log"
+    ],
+    "license": "MIT",
+    "main": "lib.npmdoc_single_line_log.js",
+    "name": "npmdoc-single-line-log",
+    "nameAlias": "npmdoc_single_line_log",
+    "nameOriginal": "npmdoc-single-line-log",
+    "os": [
+        "darwin",
+        "linux"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/npmdoc/node-npmdoc-single-line-log"
     },
     "scripts": {
-        "build-ci": "utility2 shReadmeTest build_ci.sh"
+        "build-ci": "utility2 shReadmeTest build_ci.sh",
+        "env": "env",
+        "heroku-postbuild": "(set -e; npm install \"kaizhu256/node-utility2#alpha\"; utility2 shDeployHeroku)",
+        "postinstall": "if [ -f npm_scripts.sh ]; then ./npm_scripts.sh postinstall; fi",
+        "start": "(set -e; export PORT=${PORT:-8080}; utility2 start test.js)",
+        "test": "(set -e; export PORT=$(utility2 shServerPortRandom); utility2 test test.js)"
     },
     "version": "0.0.1"
 }

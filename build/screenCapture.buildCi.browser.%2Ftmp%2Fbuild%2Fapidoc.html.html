@@ -56,6 +56,15 @@
 
         <li>
 
+            <a class="apidocElementLiA" href="#apidoc.element.single-line-log.single-line-log">
+            function <span class="apidocSignatureSpan"></span>single-line-log
+            <span class="apidocSignatureSpan">(stream)</span>
+            </a>
+
+        </li>
+
+        <li>
+
             <a class="apidocElementLiA" href="#apidoc.element.single-line-log.stderr">
             function <span class="apidocSignatureSpan">single-line-log.</span>stderr
             <span class="apidocSignatureSpan">()</span>
@@ -122,6 +131,61 @@
 
 <div class="apidocSectionDiv">
 <h1><a href="#apidoc.module.single-line-log" id="apidoc.module.single-line-log">module single-line-log</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.single-line-log.single-line-log" id="apidoc.element.single-line-log.single-line-log">
+        function <span class="apidocSignatureSpan"></span>single-line-log
+        <span class="apidocSignatureSpan">(stream)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">single-line-log = function (stream) {
+	var write = stream.write;
+	var str;
+
+	stream.write = function(data) {
+		if (str &amp;&amp; data !== str) str = null;
+		return write.apply(this, arguments);
+	};
+
+	if (stream === process.stderr || stream === process.stdout) {
+		process.on('exit', function() {
+			if (str !== null) stream.write('');
+		});
+	}
+
+	var prevLineCount = 0;
+	var log = function() {
+		str = '';
+		var nextStr = Array.prototype.join.call(arguments, ' ');
+
+		// Clear screen
+		for (var i=0; i&lt;prevLineCount; i++) {
+			str += MOVE_LEFT + CLEAR_LINE + (i &lt; prevLineCount-1 ? MOVE_UP : '');
+		}
+
+		// Actual log output
+		str += nextStr;
+		stream.write(str);
+
+		// How many lines to remove on next clear screen
+		var prevLines = nextStr.split('\n');
+		prevLineCount = 0;
+		for (var i=0; i &lt; prevLines.length; i++) {
+			prevLineCount += Math.ceil(stringWidth(prevLines[i]) / stream.columns) || 1;
+		}
+	};
+
+	log.clear = function() {
+		stream.write('');
+	};
+
+	return log;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
 
 
     <h2>

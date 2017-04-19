@@ -63,6 +63,15 @@
 
         <li>
 
+            <a class="apidocElementLiA" href="#apidoc.element.single-line-log.single-line-log">
+            function <span class="apidocSignatureSpan"></span>single-line-log
+            <span class="apidocSignatureSpan">(stream)</span>
+            </a>
+
+        </li>
+
+        <li>
+
             <a class="apidocElementLiA" href="#apidoc.element.single-line-log.stderr">
             function <span class="apidocSignatureSpan">single-line-log.</span>stderr
             <span class="apidocSignatureSpan">()</span>
@@ -129,6 +138,61 @@
 
 <div class="apidocSectionDiv">
 <h1><a href="#apidoc.module.single-line-log" id="apidoc.module.single-line-log">module single-line-log</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.single-line-log.single-line-log" id="apidoc.element.single-line-log.single-line-log">
+        function <span class="apidocSignatureSpan"></span>single-line-log
+        <span class="apidocSignatureSpan">(stream)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">single-line-log = function (stream) {
+	var write = stream.write;
+	var str;
+
+	stream.write = function(data) {
+		if (str &#x26;&#x26; data !== str) str = null;
+		return write.apply(this, arguments);
+	};
+
+	if (stream === process.stderr || stream === process.stdout) {
+		process.on(&#x27;exit&#x27;, function() {
+			if (str !== null) stream.write(&#x27;&#x27;);
+		});
+	}
+
+	var prevLineCount = 0;
+	var log = function() {
+		str = &#x27;&#x27;;
+		var nextStr = Array.prototype.join.call(arguments, &#x27; &#x27;);
+
+		// Clear screen
+		for (var i=0; i&#x3c;prevLineCount; i++) {
+			str += MOVE_LEFT + CLEAR_LINE + (i &#x3c; prevLineCount-1 ? MOVE_UP : &#x27;&#x27;);
+		}
+
+		// Actual log output
+		str += nextStr;
+		stream.write(str);
+
+		// How many lines to remove on next clear screen
+		var prevLines = nextStr.split(&#x27;\n&#x27;);
+		prevLineCount = 0;
+		for (var i=0; i &#x3c; prevLines.length; i++) {
+			prevLineCount += Math.ceil(stringWidth(prevLines[i]) / stream.columns) || 1;
+		}
+	};
+
+	log.clear = function() {
+		stream.write(&#x27;&#x27;);
+	};
+
+	return log;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
 
 
     <h2>
